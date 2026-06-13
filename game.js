@@ -90,10 +90,15 @@ const nodes={
 
 function reset(){state={node:'opening',jury:50,cred:5,clues:new Set(),phase:1,choices:0,mistakes:0,flags:{},history:[]};evidence.forEach((e,i)=>e.open=i<3);show('briefingScreen');renderDrawer('evidence')}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));$(id).classList.remove('hidden')}
+function orderedChoices(id,choices){
+ const list=[...choices],seed=[...id].reduce((sum,ch)=>sum+ch.charCodeAt(0),0);
+ for(let i=list.length-1;i>0;i--){const j=(seed+i*7)%(i+1);[list[i],list[j]]=[list[j],list[i]]}
+ return list;
+}
 function renderNode(id,feedback){state.node=id;const n=nodes[id];if(!n)return finish();state.phase=n.phase;$('phaseNumber').textContent=n.phase;$('phaseLabel').textContent=['','開庭陳述','目擊證人','館長證詞','物證攻防','最終反證','結案陳詞'][n.phase];$('speakerRole').textContent=n.role;$('dialogueSpeaker').textContent=n.speaker;$('speakerName').textContent=n.speaker;$('speakerPortrait').textContent=n.portrait;$('dialogueText').textContent=n.text;
  $('feedback').classList.toggle('hidden',!feedback);if(feedback){$('feedback').textContent=feedback.text;$('feedback').classList.toggle('bad',feedback.delta<0)}
- $('choices').innerHTML=n.choices.map((c,i)=>`<button class="choice ${c[3]==='EVIDENCE'?'evidence-choice':''}" data-index="${i}" data-key="${String.fromCharCode(65+i)}">${c[0]}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>choose(n.choices[+b.dataset.index]));updateStatus()}
-function choose(choice){const [label,action,delta,note]=choice;state.choices++;state.jury=Math.max(0,Math.min(100,state.jury+delta));if(delta<0){state.cred=Math.max(0,state.cred-1);state.mistakes++}state.history.push({phase:state.phase,label,delta});flash();const result=actions[action]?actions[action]():null;if(result==='finish'){finish();return}const next=result||nextDefault(action);renderNode(next,{text:note==='EVIDENCE'?'證物提出成功：你的主張獲得客觀紀錄支持。':note,delta})}
+ const displayed=orderedChoices(id,n.choices);$('choices').innerHTML=displayed.map((c,i)=>`<button class="choice ${c[3]==='EVIDENCE'?'evidence-choice':''}" data-index="${i}" data-key="${String.fromCharCode(65+i)}">${c[0]}</button>`).join('');document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>choose(displayed[+b.dataset.index],+b.dataset.index));updateStatus()}
+function choose(choice,index){const [label,action,delta,note]=choice;state.choices++;state.lastChoiceIndex=index;state.jury=Math.max(0,Math.min(100,state.jury+delta));if(delta<0){state.cred=Math.max(0,state.cred-1);state.mistakes++}state.history.push({phase:state.phase,label,delta});flash();const result=actions[action]?actions[action]():null;if(result==='finish'){finish();return}const next=result||nextDefault(action);renderNode(next,{text:note==='EVIDENCE'?'證物提出成功：你的主張獲得客觀紀錄支持。':note,delta})}
 function clue(id){state.clues.add(id)}
 const actions={
  openMotive:()=> 'witnessIntro',openTimeline:()=>{clue('timeline');return'witnessIntro'},openAttack:()=> 'witnessIntro',

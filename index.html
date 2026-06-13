@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="campaign.css">
   <link rel="stylesheet" href="layout-fixes.css">
+  <link rel="stylesheet" href="polish.css">
 </head>
 <body>
   <div id="titleScreen" class="screen title-screen">
@@ -76,6 +77,11 @@
         <div class="status-item"><span>發現矛盾</span><b><em id="clueCount">0</em> / <span id="clueMax">5</span></b></div>
       </section>
 
+      <section class="case-objective-bar">
+        <div><span>CURRENT ISSUE</span><strong id="currentObjective">找出檢方時間線的漏洞</strong></div>
+        <div id="chainProgress" class="chain-progress"></div>
+      </section>
+
       <section class="dialogue-panel">
         <div class="speaker-line"><span id="speakerRole">書記官</span><strong id="dialogueSpeaker">系統</strong></div>
         <p id="dialogueText">現在開庭。請辯護人準備進行答辯。</p>
@@ -113,7 +119,9 @@
   </dialog>
   <dialog id="analysisDialog"><button class="dialog-close" data-close-dialog>×</button><h2>案件分析報告</h2><div id="analysisContent"></div></dialog>
   <div id="flash" class="flash"></div>
+  <div id="impactBanner" class="impact-banner"><small>COURT UPDATE</small><strong id="impactText">證言動搖</strong></div>
   <script src="game.js"></script>
   <script src="campaign.js"></script>
+  <script src="polish.js"></script>
 </body>
 </html>
