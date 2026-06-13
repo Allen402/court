@@ -1,0 +1,22 @@
+.case-art {
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background-size: 100% auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #182536;
+}
+
+.brief-hero {
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #182536;
+}
+
+@media (max-width: 850px) {
+  .case-art { height: auto; }
+  .brief-hero { height: auto; }
+}

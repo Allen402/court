@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>逆轉證言：法庭攻防戰</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="campaign.css">
+  <link rel="stylesheet" href="layout-fixes.css">
+</head>
+<body>
+  <div id="titleScreen" class="screen title-screen">
+    <div class="title-seal">TRIAL<br><span>07</span></div>
+    <p class="kicker">INTERACTIVE COURTROOM SIMULATION</p>
+    <h1>逆轉證言</h1>
+    <h2>法庭攻防戰</h2>
+    <p class="case-tag">THREE CASE COLLECTION · 三案特別篇</p>
+    <div class="title-card">
+      <p>接手三宗看似證據確鑿的案件。從證詞、時間線與數位紀錄中找出矛盾，為每一位被告建立合理懷疑。</p>
+      <button id="startBtn" class="primary">選擇案件</button>
+      <button id="howBtn" class="secondary">遊戲說明</button>
+    </div>
+    <div class="title-footer">三個完整案件 · 全選項式攻防 · 自動保存通關進度</div>
+  </div>
+
+  <div id="caseSelectScreen" class="screen case-select-screen hidden">
+    <header class="select-header"><div><span>TRIAL ARCHIVE</span><h1>案件檔案庫</h1></div><div class="save-status">● 本機進度已保存</div></header>
+    <main class="case-select-wrap">
+      <div class="progress-summary"><span>調查進度</span><div class="progress-track"><i id="totalProgress"></i></div><b id="progressText">0 / 3 通關</b><button id="resetProgressBtn">重設進度</button></div>
+      <div id="caseGrid" class="case-grid"></div>
+      <p class="save-note">遊戲進度會自動保存在這台裝置的瀏覽器中，不需要註冊帳號。</p>
+    </main>
+  </div>
+
+  <div id="briefingScreen" class="screen briefing-screen hidden">
+    <header class="brief-header"><button id="backToCasesBtn">← 返回案件庫</button><span id="briefCourt"></span><strong id="briefCaseNo"></strong></header>
+    <main class="brief-wrap">
+      <section class="case-file">
+        <div class="case-number">刑事案件<br><b>113年度訴字第0719號</b></div>
+        <div id="briefHero" class="brief-hero"></div>
+        <h1 id="briefTitle"></h1>
+        <p id="briefSummary" class="case-summary"></p>
+        <div class="brief-grid">
+          <article><span>被告</span><strong id="briefDefendant"></strong><small id="briefDefendantRole"></small></article>
+          <article><span>指控</span><strong id="briefCharge"></strong><small id="briefSentence"></small></article>
+          <article><span>你的任務</span><strong>建立合理懷疑</strong><small id="briefMission"></small></article>
+        </div>
+        <div class="evidence-preview">
+          <h3>開庭前已取得的證物</h3>
+          <div id="briefEvidence"></div>
+        </div>
+        <button id="beginTrialBtn" class="primary wide">閱讀完畢，開始審判</button>
+      </section>
+    </main>
+  </div>
+
+  <div id="gameScreen" class="screen game-screen hidden">
+    <header class="game-header">
+      <div><span class="court-dot"></span><strong>第三法庭</strong><small id="phaseLabel">開庭陳述</small></div>
+      <div class="round-display">PHASE <b id="phaseNumber">1</b> / <span id="phaseTotal">6</span></div>
+      <button id="menuBtn" class="icon-btn" aria-label="開啟選單">⋯</button>
+    </header>
+
+    <main class="courtroom">
+      <section class="court-scene" id="courtScene">
+        <div class="judge-area"><div class="judge portrait">法</div><span>審判長</span></div>
+        <div class="lawyer prosecutor"><div id="prosecutorPortrait" class="portrait character-portrait"></div><span>檢察官<br><b id="prosecutorName"></b></span></div>
+        <div class="witness-stand"><div id="speakerPortrait" class="portrait witness character-portrait"></div><span id="speakerName">書記官</span></div>
+        <div class="lawyer defense"><div id="defensePortrait" class="portrait character-portrait"></div><span>辯護人<br><b id="defenseName"></b></span></div>
+        <div class="jury-box" id="juryBox"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </section>
+
+      <section class="status-strip">
+        <div class="status-item"><span>陪審團傾向</span><div class="balance"><i id="juryBar"></i></div><b id="juryValue">50</b></div>
+        <div class="status-item"><span>法庭威信</span><div class="hearts" id="credibilityHearts">◆ ◆ ◆ ◆ ◆</div></div>
+        <div class="status-item"><span>發現矛盾</span><b><em id="clueCount">0</em> / <span id="clueMax">5</span></b></div>
+      </section>
+
+      <section class="dialogue-panel">
+        <div class="speaker-line"><span id="speakerRole">書記官</span><strong id="dialogueSpeaker">系統</strong></div>
+        <p id="dialogueText">現在開庭。請辯護人準備進行答辯。</p>
+        <div id="feedback" class="feedback hidden"></div>
+        <div id="choices" class="choices"></div>
+      </section>
+    </main>
+
+    <aside id="evidenceDrawer" class="evidence-drawer">
+      <div class="drawer-header"><div><span>COURT RECORD</span><h2>法庭紀錄</h2></div><button id="closeEvidence" aria-label="關閉">×</button></div>
+      <div class="drawer-tabs"><button class="active" data-tab="evidence">證物</button><button data-tab="people">人物</button><button data-tab="timeline">時間線</button></div>
+      <div id="drawerContent" class="drawer-content"></div>
+    </aside>
+    <button id="recordBtn" class="record-btn"><span>⌘</span> 法庭紀錄 <b id="newEvidenceBadge">3</b></button>
+  </div>
+
+  <div id="verdictScreen" class="screen verdict-screen hidden">
+    <div class="verdict-light"></div>
+    <p>臺北地方法院 · 判決</p>
+    <h1 id="verdictTitle">無罪</h1>
+    <h2 id="verdictSubtitle">被告林哲宇，罪名不成立</h2>
+    <div class="score-board">
+      <div><span>最終評價</span><strong id="rankValue">S</strong></div>
+      <ul id="scoreDetails"></ul>
+    </div>
+    <p id="verdictReason" class="verdict-reason"></p>
+    <div class="ending-actions"><button id="restartBtn" class="primary">重新審理</button><button id="nextCaseBtn" class="secondary">返回案件庫</button><button id="reportBtn" class="secondary">查看案件分析</button></div>
+  </div>
+
+  <dialog id="helpDialog">
+    <button class="dialog-close" data-close-dialog>×</button>
+    <h2>遊戲說明</h2>
+    <p>閱讀證詞後，從選項中決定追問、施壓或提出證物。選錯會降低法庭威信；關鍵選擇則能改變陪審團傾向。</p>
+    <div class="help-grid"><div><b>1</b><span>閱讀案件與證詞</span></div><div><b>2</b><span>找出時間或邏輯矛盾</span></div><div><b>3</b><span>在正確時機提出證物</span></div><div><b>4</b><span>完成結案陳詞</span></div></div>
+  </dialog>
+  <dialog id="analysisDialog"><button class="dialog-close" data-close-dialog>×</button><h2>案件分析報告</h2><div id="analysisContent"></div></dialog>
+  <div id="flash" class="flash"></div>
+  <script src="game.js"></script>
+  <script src="campaign.js"></script>
+</body>
+</html>
